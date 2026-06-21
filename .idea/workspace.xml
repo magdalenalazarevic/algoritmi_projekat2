@@ -4,27 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b819ee19-6b6a-44cb-9e4a-137838f1375f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/algoritmi_projekat2.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/algorithms/bfs.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/algorithms/fuzzy_match.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/algorithms/pagerank.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/algorithms/recommendations.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/algorithms/search.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/algorithms/similarity.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/algorithms/trie.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data_io/loader.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/history.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/menu.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/social_graph.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/user.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/text/text_processing.py" afterDir="false" />
-    </list>
+    <list default="true" id="b819ee19-6b6a-44cb-9e4a-137838f1375f" name="Changes" comment="napravljeni fajlovi" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -77,6 +57,19 @@
       <option name="presentableId" value="Default" />
       <updated>1782063012517</updated>
     </task>
+    <task id="LOCAL-00001" summary="napravljeni fajlovi">
+      <option name="closed" value="true" />
+      <created>1782064125955</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1782064125955</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="napravljeni fajlovi" />
+    <option name="LAST_COMMIT_MESSAGE" value="napravljeni fajlovi" />
   </component>
 </project>
