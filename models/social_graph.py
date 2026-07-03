@@ -18,13 +18,12 @@ class SocialGraph:
                           (ko je blokirao datog korisnika - obrnuta mapa,
                           drzimo je radi brze provere u oba smera)
 
-    Setovi su koriscени umesto lista za veze jer je potrebna brza provera
+    Setovi su korisceni umesto lista za veze jer je potrebna brza provera
     "da li vec postoji veza / blokada" (O(1) prosecno), kao i izbegavanje
     duplikata.
 
-    Logika koriscenja blocked_by_user/blocked_user_by (zabrana preporuke,
-    zabrana dodavanja veze) implementira se u zadatku 10 - ovde se samo
-    gradi struktura nad podacima iz blocked.txt.
+    blocked_by_user/blocked_user_by se koriste za brzu proveru blokade u oba
+    smera, sto je potrebno za zabranu dodavanja veze i kasnije za preporuke.
     """
 
     def __init__(self):
@@ -48,11 +47,11 @@ class SocialGraph:
         self.following.setdefault(user.user_id, set())
         self.followers.setdefault(user.user_id, set())
 
-    # ---------- Dodavanje veza praćenja ----------
+    # ---------- Dodavanje veza pracenja ----------
 
     def add_connection(self, from_id, to_id):
         """
-        Dodaje usmerenu vezu praćenja from_id -> to_id (from_id prati to_id).
+        Dodaje usmerenu vezu pracenja from_id -> to_id (from_id prati to_id).
 
         Vraca True ako je veza uspesno dodata, False ako vec postoji ili
         ako jedan od korisnika ne postoji u grafu.
@@ -84,6 +83,16 @@ class SocialGraph:
         self.blocked_by_user.setdefault(blocker_id, set()).add(blocked_id)
         self.blocked_user_by.setdefault(blocked_id, set()).add(blocker_id)
         return True
+
+    def is_blocked_between(self, first_id, second_id):
+        """
+        Vraca True ako postoji blokada u bilo kom smeru izmedju dva korisnika.
+        Koristi se pre dodavanja nove follow veze i pri filtriranju preporuka.
+        """
+        return (
+            second_id in self.blocked_by_user.get(first_id, set())
+            or first_id in self.blocked_by_user.get(second_id, set())
+        )
 
     # ---------- Upiti nad grafom ----------
 

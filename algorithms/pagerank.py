@@ -1,6 +1,6 @@
 """
 PageRank algoritam (zadatak 2) - racuna uticaj svakog korisnika u grafu
-praćenja.
+pracenja.
 
 Damping factor (d) = verovatnoca da "slucajni setac" nastavi da prati
 linkove (podrazumevano 0.85). Sa verovatnocom (1-d) "setac" se nasumicno
@@ -72,7 +72,7 @@ def compute_pagerank(graph, damping=0.85, epsilon=1e-6, max_iterations=100,
     diff = float("inf")
 
     for iteration in range(1, max_iterations + 1):
-        dangling_sum = sum(ranks[i] for i in dangling_indices)
+        dangling_sum = sum(ranks[i] for i in dangling_indices) #rank korisnika koji nikoga ne prati se ravnomerno rasporedi svima
         base = (1 - damping) / n + damping * dangling_sum / n
 
         new_ranks = [0.0] * n
@@ -82,10 +82,10 @@ def compute_pagerank(graph, damping=0.85, epsilon=1e-6, max_iterations=100,
                 incoming += ranks[follower_index] / out_degree_arr[follower_index]
             new_ranks[i] = base + damping * incoming
 
-        diff = sum(abs(new_ranks[i] - ranks[i]) for i in range(n))
+        diff = sum(abs(new_ranks[i] - ranks[i]) for i in range(n)) #kolika je promena u odnosu na prethodnu interaciju
         ranks = new_ranks
 
-        if diff < epsilon:
+        if diff < epsilon: #promena jako mala stajemo
             print(f"PageRank konvergirao posle {iteration} iteracija "
                   f"(razlika={diff:.2e})")
             break

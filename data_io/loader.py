@@ -37,7 +37,7 @@ def load_users(graph, path):
             parts = line.split("|", maxsplit=2)
             if len(parts) != 3:
                 print(f"[upozorenje] users.txt linija {line_number}: "
-                      f"neispravan format, preskačem -> {line}")
+                      f"neispravan format, preskacem -> {line}")
                 continue
 
             raw_id, username, bio = parts
@@ -45,7 +45,7 @@ def load_users(graph, path):
                 user_id = int(raw_id)
             except ValueError:
                 print(f"[upozorenje] users.txt linija {line_number}: "
-                      f"id nije broj, preskačem -> {line}")
+                      f"id nije broj, preskacem -> {line}")
                 continue
 
             graph.add_user(User(user_id, username, bio))
@@ -53,7 +53,7 @@ def load_users(graph, path):
 
 def load_connections(graph, path):
     """
-    Cita connections.txt i dodaje sve usmerene veze praćenja u graf.
+    Cita connections.txt i dodaje sve usmerene veze pracenja u graf.
     Vraca broj uspesno dodatih veza.
     """
     added = 0
@@ -66,14 +66,14 @@ def load_connections(graph, path):
             parts = line.split("|")
             if len(parts) != 2:
                 print(f"[upozorenje] connections.txt linija {line_number}: "
-                      f"neispravan format, preskačem -> {line}")
+                      f"neispravan format, preskacem -> {line}")
                 continue
 
             try:
                 from_id, to_id = int(parts[0]), int(parts[1])
             except ValueError:
                 print(f"[upozorenje] connections.txt linija {line_number}: "
-                      f"id nije broj, preskačem -> {line}")
+                      f"id nije broj, preskacem -> {line}")
                 continue
 
             if graph.add_connection(from_id, to_id):
@@ -96,14 +96,14 @@ def load_blocked(graph, path):
             parts = line.split("|")
             if len(parts) != 2:
                 print(f"[upozorenje] blocked.txt linija {line_number}: "
-                      f"neispravan format, preskačem -> {line}")
+                      f"neispravan format, preskacem -> {line}")
                 continue
 
             try:
                 blocker_id, blocked_id = int(parts[0]), int(parts[1])
             except ValueError:
                 print(f"[upozorenje] blocked.txt linija {line_number}: "
-                      f"id nije broj, preskačem -> {line}")
+                      f"id nije broj, preskacem -> {line}")
                 continue
 
             if graph.add_blocked(blocker_id, blocked_id):
@@ -124,7 +124,7 @@ def load_dataset(users_path, connections_path, blocked_path):
     blocked_added = load_blocked(graph, blocked_path)
 
     print(f"Ucitano korisnika: {graph.number_of_users()}")
-    print(f"Ucitano veza praćenja: {connections_added}")
+    print(f"Ucitano veza pracenja: {connections_added}")
     print(f"Ucitano blokada: {blocked_added}")
 
     return graph

@@ -1,181 +1,135 @@
-# ASP Projekat 2 - simulacija društvene mreže
+# ASP Projekat 2 - simulacija drustvene mreze
 
-Konzolna Python aplikacija koja učitava usmereni graf društvene mreže i omogućava rangiranje korisnika PageRank algoritmom, pretragu profila, dodavanje novih veza praćenja i pregled istorije interakcija.
-
-Projekat koristi priložene skupove podataka iz specifikacije predmeta. Trenutno su u potpunosti implementirani zadaci 1-5, odnosno osnovni deo projekta.
-
-## Zahtevi
-
-- Python 3.10 ili noviji
-- Nisu potrebne dodatne biblioteke
-
-Koriste se isključivo moduli iz Python standardne biblioteke, kao što su `heapq`, `re` i `datetime`.
+Konzolna Python aplikacija koja ucitava usmereni graf drustvene mreze i
+omogucava PageRank rangiranje, pretragu profila, autocomplete, dodavanje veza,
+istoriju interakcija, BFS obilazak, did-you-mean predloge i hibridne preporuke.
 
 ## Pokretanje
 
-Program treba pokrenuti iz korenskog direktorijuma projekta:
+Program se pokrece iz korenskog direktorijuma projekta:
 
 ```powershell
 python main.py
 ```
 
-Veličina skupa podataka bira se promenom konstante `DATASET_VELICINA` u fajlu `main.py`:
+Podrazumevano je ukljucen `full` skup podataka:
 
 ```python
-DATASET_VELICINA = "small"  # "small", "medium" ili "full"
+DATASET_VELICINA = "full"
 ```
 
-Za razvoj i brzo testiranje preporučuje se `small`, za demonstraciju `medium`, dok je `full` namenjen proveri performansi.
+Vrednost se u `main.py` moze promeniti na `"small"` ili `"medium"` za brze
+testiranje.
 
-## Ulazni podaci
+## Ulazni fajlovi
 
-Za svaku veličinu skupa očekuju se sledeća tri fajla unutar direktorijuma `dataset/<velicina>/`.
+Za svaki skup podataka postoje:
 
-### `users.txt`
+- `users.txt` u formatu `id|username|bio`
+- `connections.txt` u formatu `from_id|to_id`
+- `blocked.txt` u formatu `blocker_id|blocked_id`
 
-Podaci o korisnicima u formatu:
-
-```text
-id|username|bio
-```
-
-- `id` - jedinstveni celobrojni identifikator korisnika
-- `username` - korisničko ime
-- `bio` - tekstualni opis profila
-
-### `connections.txt`
-
-Usmerene veze praćenja u formatu:
-
-```text
-from_id|to_id
-```
-
-Zapis znači da korisnik `from_id` prati korisnika `to_id`.
-
-### `blocked.txt`
-
-Podaci o blokiranju u formatu:
-
-```text
-blocker_id|blocked_id
-```
-
-Zapis znači da je korisnik `blocker_id` blokirao korisnika `blocked_id`. Podaci se trenutno učitavaju u graf; njihova primena pri preporukama i dodavanju veza pripada dodatnom delu projekta.
+Fajlovi se nalaze u `dataset/small`, `dataset/medium` i `dataset/full`.
 
 ## Implementirane funkcionalnosti
 
-### 1. Graf društvene mreže
+1. Graf drustvene mreze
+   - klase `User` i `SocialGraph`
+   - hash mape za korisnike po ID-u i username-u
+   - izlazne veze `following`
+   - ulazne veze `followers`
+   - blokade u oba smera
 
-- klase `User` i `SocialGraph`
-- usmereni graf praćenja
-- hash mape za pristup korisnicima po ID-u i korisničkom imenu
-- odvojeno čuvanje ulaznih i izlaznih veza
-- efikasan pristup ulaznom i izlaznom stepenu korisnika
-- učitavanje blokada u oba smera radi kasnije efikasne provere
+2. PageRank
+   - iterativni PageRank algoritam
+   - damping factor `0.85`
+   - epsilon `1e-6`
+   - obrada dangling cvorova
+   - warm start nakon dodavanja nove veze
+   - top-k korisnici preko `heapq.nlargest`
 
-### 2. PageRank
+3. Pretraga
+   - username pretraga, case-insensitive
+   - bio pretraga preko inverted index-a
+   - normalizacija teksta i tokenizacija
+   - rangiranje po relevantnosti, zatim po PageRank-u
 
-- sopstvena iterativna implementacija PageRank algoritma
-- damping faktor `0.85`
-- zaustavljanje pri konvergenciji sa `epsilon = 1e-6`
-- pravilna obrada korisnika bez izlaznih veza
-- warm start pri ponovnom računanju nakon dodavanja veze
-- izdvajanje najuticajnijih korisnika pomoću heap strukture
+4. Istorija interakcija
+   - pamti nove follow veze dodate tokom rada programa
+   - prikazuje koga je korisnik zapratio
+   - prikazuje ko je zapratio korisnika
+   - prikaz je hronoloski
 
-### 3. Pretraga korisnika
+5. Tekstualni meni
+   - pretraga
+   - najuticajniji korisnici
+   - dodavanje veze
+   - istorija
+   - autocomplete
+   - BFS
+   - did-you-mean
+   - preporuke
 
-- case-insensitive pretraga po korisničkom imenu
-- pretraga po rečima iz biografije
-- normalizacija teksta i tokenizacija
-- inverted index koji se formira jednom pri pokretanju
-- rangiranje prema relevantnosti, a zatim prema PageRank vrednosti
-- izdvajanje top rezultata pomoću heap strukture
+6. Trie i autocomplete
+   - sopstvena trie struktura za username prefikse
+   - unos moze biti `mar` ili `mar*`
+   - rezultati se sortiraju po PageRank-u
 
-Kod pretrage po korisničkom imenu tačno poklapanje ima najveću relevantnost, zatim prefiks, pa pojavljivanje upita unutar imena. Kod pretrage biografije relevantnost predstavlja broj različitih reči iz upita pronađenih u biografiji.
+7. Hibridne preporuke
+   - Personalized PageRank iz perspektive zadatog korisnika
+   - Jaccard slicnost biografija
+   - skor: `alpha * PPR + (1 - alpha) * content_similarity`
+   - filtrira samog korisnika, vec pracene korisnike i blokade u oba smera
 
-### 4. Istorija interakcija
+8. BFS obilazak
+   - prikazuje konekcije po nivoima
+   - korisnik bira maksimalni nivo
+   - svaki korisnik se obradjuje najvise jednom
 
-- evidentiranje novih veza dodatih tokom rada programa
-- pregled korisnika koje je zadati korisnik zapratio
-- pregled korisnika koji su zapratili zadatog korisnika
-- hronološki prikaz sa vremenom nastanka događaja
+9. Did you mean
+   - Levenshtein distance za slicna korisnicka imena
+   - case-insensitive
+   - kod izjednacenja prednost ima veci PageRank
 
-Početne veze iz skupa podataka predstavljaju početno stanje grafa i ne upisuju se u istoriju tekuće sesije.
+10. Blokirani korisnici
+   - `blocked.txt` se ucitava
+   - dodavanje veze se zabranjuje ako blokada postoji u bilo kom smeru
+   - preporuke ne prikazuju blokirane korisnike u oba smera
 
-### 5. Tekstualni meni
+## Primeri za rucno testiranje
 
-Meni omogućava:
+Za brze testiranje preporucuje se privremeno staviti:
 
-1. pretragu po korisničkom imenu ili biografiji;
-2. prikaz najuticajnijih korisnika;
-3. dodavanje nove veze praćenja;
-4. prikaz istorije interakcija;
-5. izlazak iz programa.
-
-Unosom `q` pri unosu celobrojnih parametara moguće je otkazati trenutnu operaciju.
-
-## Primeri za demonstraciju
-
-Pošto se korisnička imena i ID-jevi razlikuju između skupova, praktični primeri mogu se pronaći direktno u odgovarajućem fajlu `dataset/<velicina>/users.txt`.
-
-Predloženi tok demonstracije:
-
-1. pokrenuti program nad `medium` skupom;
-2. prikazati deset najuticajnijih korisnika;
-3. pretražiti često korišćenu reč poput `python`, `data`, `music` ili `research` u biografijama;
-4. pretražiti celo korisničko ime i deo tog imena;
-5. dodati novu vezu između dva postojeća korisnika koja već nije prisutna;
-6. pokazati ponovno računanje PageRank-a i istoriju oba učesnika.
-
-## Struktura projekta
-
-```text
-.
-|-- algorithms/
-|   |-- pagerank.py       # PageRank i izbor top korisnika
-|   `-- search.py         # pretraga i inverted index
-|-- data_io/
-|   `-- loader.py         # učitavanje ulaznih fajlova
-|-- dataset/
-|   |-- small/
-|   |-- medium/
-|   `-- full/
-|-- models/
-|   |-- user.py
-|   `-- social_graph.py
-|-- text/
-|   `-- text_processing.py
-|-- history.py
-|-- menu.py
-`-- main.py
+```python
+DATASET_VELICINA = "small"
 ```
 
-U projektu postoje i moduli namenjeni funkcionalnostima dodatnog dela. Funkcionalnost se u ovom dokumentu smatra implementiranom tek kada je povezana sa ostatkom aplikacije i dostupna kroz meni.
+Primeri:
+
+- PageRank top korisnici: opcija `2`, zatim `3`
+- Username pretraga: opcija `1`, zatim `a`, upit `gui`, broj `5`
+- Bio pretraga: opcija `1`, zatim `b`, upit `researcher science`, broj `5`
+- Dodavanje veze: opcija `3`, zatim `1`, `2`
+- Istorija: opcija `4`, zatim `1` ili `2`
+- Autocomplete: opcija `5`, upit `gui`, broj `5`
+- BFS: opcija `6`, korisnik `1`, nivo `2`
+- Did you mean: opcija `7`, upit `guimanj`
+- Preporuke: opcija `8`, korisnik `1`, alpha `0.5`, broj `5`
 
 ## Performanse
 
-Kontrolno merenje nad priloženim `full` skupom dalo je sledeće rezultate:
+Kontrolna merenja na ovom racunaru:
 
-| Operacija | Vreme |
-|---|---:|
-| Učitavanje 81.306 korisnika i 1.768.135 veza | oko 4,5 s |
-| Početno računanje PageRank-a | oko 35,8 s |
-| Formiranje inverted index-a | oko 2,4 s |
+| Skup | Ucitavanje | PageRank | Inverted index |
+|---|---:|---:|---:|
+| medium | oko 0.5 s | oko 1.8 s | oko 0.2 s |
+| full | oko 4.2 s | oko 36 s | oko 1.7 s |
 
-Vremena zavise od računara i Python okruženja. Strukture se formiraju jednom pri pokretanju i ne učitavaju se ponovo pri svakoj operaciji.
+Na `full` skupu hibridne preporuke za jednog korisnika traju oko 32 s, jer
+racunaju Personalized PageRank i prolaze kroz kandidate za slicnost biografija.
 
-## Plan dodatnog dela
+## Napomena
 
-Za kompletiranje projekta do 25 poena potrebno je završiti i integrisati:
-
-- Trie i autocomplete;
-- hibridne preporuke pomoću Personalized PageRank-a i sličnosti biografija;
-- BFS obilazak po nivoima konekcija;
-- „Did you mean“ predloge;
-- primenu blokada pri preporukama i dodavanju novih veza;
-- završnu validaciju unosa, dokumentaciju i proveru performansi.
-
-## Napomena o izmenama
-
-Nove veze i ponovo izračunate PageRank vrednosti čuvaju se tokom trenutnog pokretanja programa. Upis izmena nazad u ulazne fajlove nije neophodan prema specifikaciji i trenutno nije implementiran.
+Izmene nastale tokom jednog pokretanja programa cuvaju se u memoriji. Upis novih
+veza i istorije nazad u ulazne fajlove nije neophodan prema FAQ-u i nije
+implementiran.

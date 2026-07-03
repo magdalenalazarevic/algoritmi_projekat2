@@ -7,10 +7,11 @@ inverted index za pretragu po biografiji i pokrece tekstualni meni
 from data_io.loader import load_dataset
 from algorithms.pagerank import compute_pagerank
 from algorithms.search import build_inverted_index
+from algorithms.trie import build_username_trie
 from history import InteractionHistory
 from menu import run_menu
 
-DATASET_VELICINA = "small"  # "small", "medium" ili "full"
+DATASET_VELICINA = "medium"  # "small", "medium" ili "full"
 
 USERS_PATH = f"dataset/{DATASET_VELICINA}/users.txt"
 CONNECTIONS_PATH = f"dataset/{DATASET_VELICINA}/connections.txt"
@@ -26,9 +27,12 @@ def main():
     print("Gradim inverted index za pretragu po biografiji...")
     inverted_index = build_inverted_index(graph)
 
+    print("Gradim trie za autocomplete korisnickih imena...")
+    username_trie = build_username_trie(graph)
+
     history = InteractionHistory()
 
-    run_menu(graph, ranks, inverted_index, history)
+    run_menu(graph, ranks, inverted_index, username_trie, history)
 
 
 if __name__ == "__main__":
